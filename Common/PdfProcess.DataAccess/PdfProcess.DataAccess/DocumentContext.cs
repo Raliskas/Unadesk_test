@@ -4,9 +4,9 @@ using PdfProcess.Worker.DataAccess.Mapping;
 
 namespace PdfProcess.Worker.DataAccess;
 
-public class WorkerContext : DbContext
+public class DocumentContext : DbContext
 {
-    public WorkerContext(DbContextOptions<WorkerContext> options)
+    public DocumentContext(DbContextOptions<DocumentContext> options)
     : base(options)
     {
     }

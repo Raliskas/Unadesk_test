@@ -40,7 +40,7 @@ public class BackgroundPdfWorker : BackgroundService
                 using var scope = _scopeFactory.CreateScope();
                 
                 //TODO можно было реализовать через handler чтобы не прокидывать все зависимости вот так хардкодом, а хендлер бы через DI все подтягивал 
-                var context = scope.ServiceProvider.GetRequiredService<WorkerContext>();
+                var context = scope.ServiceProvider.GetRequiredService<DocumentContext>();
                 var pdfExtractor = scope.ServiceProvider.GetRequiredService<IPdfTextExtractor>();
 
                 await ProcessDocumentAsync(message, context, pdfExtractor);
@@ -63,7 +63,7 @@ public class BackgroundPdfWorker : BackgroundService
 
     private async Task ProcessDocumentAsync(
         DocumentMessage message,
-        WorkerContext context,
+        DocumentContext context,
         IPdfTextExtractor extractor)
     {
         _logger.LogInformation($"Processing document {message.DocumentId}: {message.FileName}");

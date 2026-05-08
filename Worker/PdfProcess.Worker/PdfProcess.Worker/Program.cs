@@ -1,18 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PdfProcess.DataAccess;
 using PdfProcess.Services.RabbitMq;
 using PdfProcess.Worker.Background;
-using PdfProcess.Worker.DataAccess;
 using PdfProcess.Worker.Services;
 using PdfProcess.Worker.Services.Interfaces;
 
 var builder = Host.CreateApplicationBuilder(args);
 
 // Add services
-builder.Services.AddDbContext<WorkerContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
+builder.Services.AddDatabase(builder.Configuration);
 
 builder.Services.AddRabbitMq(builder.Configuration);
 
