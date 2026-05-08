@@ -254,3 +254,35 @@ logs
 **/bin
 *.cache
 
+
+secrets.json
+*.secret.json
+.env
+.env.local
+user.config
+
+# Сертификаты и ключи (SSL/TLS для RabbitMQ)
+*.pem
+*.crt
+*.key
+*.pfx
+*.p12
+
+# --- ОС и редакторы ---
+# Windows
+Thumbs.db
+desktop.ini
+
+# macOS
+.DS_Store
+
+# Linux
+.directory
+
+# --- Прочие артефакты ---
+*.tmp
+*.swp
+*~
+*.cache
+.ropeproject
+
