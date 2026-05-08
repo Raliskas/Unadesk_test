@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using PdfProcess.Worker.DataAccess;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PdfProcess.DataAccess;

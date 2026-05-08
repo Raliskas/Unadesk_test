@@ -1,4 +1,4 @@
-﻿namespace PdfProcess.Worker.Services.Interfaces;
+﻿namespace PdfProcess.Services.Interfaces;
 
 public interface IRabbitMqService : IDisposable
 {

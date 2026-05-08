@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PdfProcess.Data.Models;
-using PdfProcess.Worker.DataAccess.Mapping;
+using PdfProcess.DataAccess.Mapping;
 
-namespace PdfProcess.Worker.DataAccess;
+namespace PdfProcess.DataAccess;
 
 public class DocumentContext : DbContext
 {

@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
-using PdfProcess.Worker.Services.Interfaces;
+using PdfProcess.Services.Interfaces;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 
-namespace PdfProcess.Worker.Services;
+namespace PdfProcess.Services;
 
 public class RabbitMqService : IRabbitMqService
 {

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using PdfProcess.Worker.Services;
-using PdfProcess.Worker.Services.Interfaces;
+using PdfProcess.Services.Interfaces;
 using RabbitMQ.Client;
 using System.Diagnostics.CodeAnalysis;
 

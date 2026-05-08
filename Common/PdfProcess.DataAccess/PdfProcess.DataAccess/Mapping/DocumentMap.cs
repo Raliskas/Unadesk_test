@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PdfProcess.Data.Models;
 
-namespace PdfProcess.Worker.DataAccess.Mapping;
+namespace PdfProcess.DataAccess.Mapping;
 
 public class DocumentMap : IEntityTypeConfiguration<Document>
 {
