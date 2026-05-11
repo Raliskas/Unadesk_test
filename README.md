@@ -1,15 +1,21 @@
 Unadesk\_test
 
 
+https://docs.google.com/document/d/1GKmRARVykfB7zqTW74\_ISGR9RqFYJg3wR74pZLCX3Do/edit?tab=t.0
 
-Rabbit
-http://127.0.0.1:15672/
 
-Common - Data and RabbitService
+Init - папка с init.sql для инициализации бд с созданными пустыми Табличками 
 
-Presentation - GateawayApi
 
-Worker - Consumer rabbit and background worker
 
-Init - init.sql file for create table in database in initialization
+Src - основная папка 
+infrastructure -> Data -> модельки и если бы реализовал через CQRS то хендлеры 
+
+infrastructure -> работа с бд 
+integration -> RabbitMQ продюсер и консюмер
+
+presentation -> Public\_Api - минимал апи реализация с логикой обработки внутри 
+		Worker - обработчик сообщений из RabbitMq
+
+Не стал реализовывать все через CQRS или Repository тк тестовое задание и я так понял тут был основной упор был с RabbitMq , до этого с ним не работал , а только с Kafka
 

@@ -5,6 +5,7 @@ services:
     image: rabbitmq:3.10.7-management
     hostname: rabbitmq
     restart: always
+    container_name: pdfprocess_rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=rmuser
       - RABBITMQ_DEFAULT_PASS=rmpassword
@@ -14,10 +15,17 @@ services:
     ports:
       - 15672:15672
       - 5672:5672
+    networks:
+      - pdfprocess_network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   db:
     image: postgres:15-alpine 
-    container_name: postgres_container
+    container_name: pdfprocess_postgres
     restart: always
     environment:
       POSTGRES_USER: user        
@@ -28,11 +36,76 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data 
       - ./init:/docker-entrypoint-initdb.d
+    networks:
+      - pdfprocess_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d mydatabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   public_api:
+    build:
+      context: .
+      dockerfile: src/presentation/PdfProcess.PublicApi/Dockerfile
+    container_name: pdfprocess_api
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__PostgresConnection=Host=db;Port=5432;Database=mydatabase;Username=user;Password=password
+      - RabbitMqConfig__HostName=rabbitmq
+      - RabbitMqConfig__Port=5672
+      - RabbitMqConfig__UserName=rmuser
+      - RabbitMqConfig__Password=rmpassword 
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads_data:/var/uploads/pdf
+      - ./logs/api:/app/Logs
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    networks:
+      - pdfprocess_network
 
   worker:
+    build:
+      context: .
+      dockerfile: src/presentation/PdfProcess.Worker/Dockerfile
+    container_name: pdfprocess_worker
+    restart: always
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      - ConnectionStrings__PostgresConnection=Host=db;Port=5432;Database=mydatabase;Username=user;Password=password
+      - RabbitMqConfig__HostName=rabbitmq
+      - RabbitMqConfig__Port=5672
+      - RabbitMqConfig__UserName=rmuser
+      - RabbitMqConfig__Password=rmpassword 
+    volumes:
+      - uploads_data:/var/uploads/pdf
+      - ./logs/worker:/app/Logs
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    networks:
+      - pdfprocess_network
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
+networks:
+  pdfprocess_network:
+    driver: bridge
 
 volumes:
   pgdata:
+  rabbitmq_data:
+  uploads_data:
