@@ -35,31 +35,25 @@ public class BackgroundPdfWorker : BackgroundService
     {
         _logger.LogInformation("Document Processing Worker started");
 
-        try
+        while (!cancellationToken.IsCancellationRequested)
         {
-            await _rabbitMqService.StartConsumingAsync<DocumentMessage>(_queueName, async (message) =>
+            try
             {
-                using var scope = _scopeFactory.CreateScope();
+                await _rabbitMqService.StartConsumingAsync<DocumentMessage>(_queueName,
+                    async (message) =>
+                    {
+                        using var scope = _scopeFactory.CreateScope();
+                        var context = scope.ServiceProvider.GetRequiredService<DocumentContext>();
+                        var pdfExtractor = scope.ServiceProvider.GetRequiredService<IPdfTextExtractor>();
 
-                //TODO could have been implemented Handler so as not to pass all the dependencies like this in hardcode, and the handler would have pulled everything through DI
-                var context = scope.ServiceProvider.GetRequiredService<DocumentContext>();
-                var pdfExtractor = scope.ServiceProvider.GetRequiredService<IPdfTextExtractor>();
-
-                await ProcessDocumentAsync(message, context, pdfExtractor);
-            }, cancellationToken);
-
-            _logger.LogInformation("Started consuming messages from queue: {QueueName}", _queueName);
-
-            // Waiting when cancelation token is stoped
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                await Task.Delay(1000, cancellationToken);
+                        await ProcessDocumentAsync(message, context, pdfExtractor);
+                    }, cancellationToken);
             }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to start message consumer");
-            throw;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Consumer error, reconnecting...");
+                await Task.Delay(5000, cancellationToken);
+            }
         }
     }
 
